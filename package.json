@@ -1,7 +1,7 @@
 {
     "name": "louis house",
     "version": "1.0.0",
-    "description": "Application to interact with an LLM API",
+    "description": "Application of Louis House",
     "private": true,
     "workspaces": [
       "client",
