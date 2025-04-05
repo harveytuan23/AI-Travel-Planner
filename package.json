@@ -1,0 +1,22 @@
+{
+    "name": "louis house",
+    "version": "1.0.0",
+    "description": "Application to interact with an LLM API",
+    "private": true,
+    "workspaces": [
+      "client",
+      "server"
+    ],
+    "scripts": {
+      "install:all": "npm install --workspaces",
+      "start:client": "npm run dev --workspace=client",
+      "build:client": "npm run build --workspace=client",
+      "start:server": "npm run dev --workspace=server",
+      "start:dev": "concurrently \"npm run start:server\" \"npm run start:client\"",
+      "build:prod": "npm run build:client && npm run start:server --workspace=server",
+      "test:server": "npm run test --workspace=server"
+    },
+    "devDependencies": {
+      "concurrently": "^7.0.0"
+    }
+  }
