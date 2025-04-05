@@ -1,5 +1,5 @@
 {
-    "name": "louis house",
+    "name": "louis_house",
     "version": "1.0.0",
     "description": "Application to interact with an LLM API",
     "private": true,

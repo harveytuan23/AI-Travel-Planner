@@ -1,3 +1,85 @@
+./client/node_modules
+./server/node_modules
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+*.icloud
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+*.vsix
+
+# npm
+node_modules/
+npm-debug.log
+npm-debug.log.*
+.npm
+.npmrc
+.node_repl_history
+
+# Node.js
+logs
+*.log
+pids
+*.pid
+*.seed
+*.pid.lock
+lib-cov
+coverage
+.nyc_output
+.grunt
+bower_components
+.lock-wscript
+build/Release
+jspm_packages/
+web_modules/
+dist/
+tmp/
+temp/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.cache
+.parcel-cache
+
+# React / Create React App
+build/
+.cache/
+.parcel-cache/
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+.eslintcache
+
 # Logs
 logs
 *.log
