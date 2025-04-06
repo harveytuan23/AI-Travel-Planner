@@ -43,7 +43,7 @@ function ChatInterface({ onLocationsExtracted }) {
       setTimeout(scrollToBottom, 100);
   
       try {
-        // ✅ 呼叫後端 API 拿 Groq 回覆
+        //Groq APi
         const response = await axios.post('http://localhost:3001/chat', {
           prompt: inputText
         }, {
@@ -76,11 +76,11 @@ function ChatInterface({ onLocationsExtracted }) {
         setMessages(prevMessages => [...prevMessages, aiMessage]);
         setTimeout(scrollToBottom, 100);
       } catch (error) {
-        console.error('發送訊息時出錯:', error);
+        console.error('Send message error:', error);
   
         const errorMessage = {
           id: Date.now() + 1,
-          text: "抱歉，發送訊息時出現錯誤，請稍後再試。",
+          text: "Sorry, there was an error sending the message. Please try again later.",
           sender: 'ai',
           timestamp: new Date().toISOString(),
         };

@@ -3,7 +3,7 @@ const express = require('express');
 const db = require('../db');
 const router = express.Router();
 
-// 註冊
+// register
 router.post('/register', (req, res) => {
   const { username, password } = req.body;
 

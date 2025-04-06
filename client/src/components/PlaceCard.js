@@ -3,12 +3,10 @@ import React from 'react';
 import './PlaceCard.css';
 
 function PlaceCard({ name, city, address, rating, phone, url, location, onAddToSchedule, onRemoveFromSchedule, isInSchedule, index, viewType }) {
-  // viewType 可以是 'schedule' 或 'recommend'
   const cardClassName = `place-card ${viewType === 'schedule' ? 'schedule-card' : 'recommend-card'}`;
   
   return (
     <div className={cardClassName}>
-      {/* 根据是否在行程中显示不同的按钮 */}
       {onAddToSchedule && !isInSchedule && (
         <button 
           className="add-to-schedule-btn" 
@@ -32,7 +30,7 @@ function PlaceCard({ name, city, address, rating, phone, url, location, onAddToS
       <h3 className="place-name">
         {index && (
             <span className="place-index">
-            {index}. {/* 直接顯示 A / B / C */}
+            {index}. 
             </span>
         )}
         {name}

@@ -2,9 +2,9 @@
 export function parseLatLngLocationString(locationString) {
     const parts = locationString.split('|').map(p => p.trim()).filter(Boolean);
   
-    if (parts.length < 2) {
-      throw new Error('需要至少兩個地點');
-    }
+    // if (parts.length < 2) {
+    //   throw new Error('at least two places are needed');
+    // }
   
     const origin = parts[0].split(':')[1];
     const destination = parts[parts.length - 1].split(':')[1];

@@ -1,4 +1,3 @@
-// 轉換 Groq 字串為搜尋字串陣列
 export function convertLocationStringToQueries(locationString) {
     const cleaned = locationString.replace(/[{}]/g, '').trim();
     return cleaned.split(';')
@@ -10,7 +9,7 @@ export function convertLocationStringToQueries(locationString) {
       .filter(Boolean);
   }
   
-  // 查詢單一地點的詳細資料
+  // query the details of a single place
   export function fetchPlaceDetail(query, mapInstance) {
     return new Promise((resolve, reject) => {
       if (!window.google || !mapInstance) {
@@ -47,7 +46,7 @@ export function convertLocationStringToQueries(locationString) {
     });
   }
   
-  // 整合整批查詢
+  // integrate the batch queries
   export async function fetchAllPlaceDetailsFromRawString(locationString, mapInstance) {
     const queries = convertLocationStringToQueries(locationString);
     const results = await Promise.allSettled(
@@ -58,7 +57,7 @@ export function convertLocationStringToQueries(locationString) {
     const rejected = results.filter(r => r.status === 'rejected');
   
     if (rejected.length) {
-      console.warn("⚠️ 有些地點查不到：", rejected.length, "/", queries.length);
+      console.warn("⚠️ some places are not found:", rejected.length, "/", queries.length);
     }
   
     return fulfilled;

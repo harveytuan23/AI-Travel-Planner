@@ -1,5 +1,4 @@
 import axios from 'axios';
-//require('dotenv').config({ path: '../.env' });
 
 const server_port = process.env.REACT_APP_SERVER_PORT;
 

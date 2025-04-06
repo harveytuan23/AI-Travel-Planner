@@ -11,7 +11,7 @@ const Map = ({ locationString, mapInstance }) => {
       .then(() => {
         if (!mapRef.current) return;
   
-        // ✅ 使用傳進來的 ref
+        // ✅ use the ref passed in
         mapInstance.current = new window.google.maps.Map(mapRef.current, {
           center: { lat: 44.5645, lng: -123.2757050 },
           zoom: 12,
@@ -21,28 +21,28 @@ const Map = ({ locationString, mapInstance }) => {
         directionsRendererRef.current.setMap(mapInstance.current);
       })
       .catch((err) => {
-        console.error('Google Maps 載入失敗:', err);
+        console.error('⚠️ Google Maps load failed:', err);
       });
   }, []);
   
 
   useEffect(() => {
     if (!locationString || !mapInstance.current) {
-      console.log("❌ 尚未準備好地圖", locationString, mapInstance.current);
+      console.log("❌ map is not ready", locationString, mapInstance.current);
       return;
     }
   
     const { google } = window;
   
-    // 移除先前的路線或 Marker
+    // remove the previous route or Marker
     if (directionsRendererRef.current) {
       directionsRendererRef.current.setMap(null);
     }
   
-    // 解析點的字串格式
+    // parse the location string
     const parts = locationString.split('|').map(p => p.trim()).filter(Boolean);
     if (parts.length === 1) {
-      // 只有一個地點，顯示 Marker
+      // only one place, show the Marker
       const [name, coord] = parts[0].split(':');
       const [lat, lng] = coord.split(',').map(Number);
   
@@ -52,15 +52,15 @@ const Map = ({ locationString, mapInstance }) => {
         title: name,
       });
   
-      // 中心移到該地點
+      // move the center to the place
       mapInstance.current.setCenter({ lat, lng });
       mapInstance.current.setZoom(14);
   
-      return; // ✅ 不跑下面畫線
+      return; // not run the following to draw the line
     }
   
     try {
-      // 多於一個點才畫路線
+      // more than one place, draw the line
       const { origin, destination, waypoints } = parseLatLngLocationString(locationString);
   
       const directionsService = new google.maps.DirectionsService();
@@ -79,12 +79,12 @@ const Map = ({ locationString, mapInstance }) => {
           if (status === 'OK') {
             renderer.setDirections(result);
           } else {
-            console.error("❌ Google Directions 取得失敗:", status);
+            console.error("❌ Google Directions failed:", status);
           }
         }
       );
     } catch (err) {
-      console.warn("⚠️ parseLatLngLocationString 發生錯誤:", err.message);
+      console.warn("⚠️ parseLatLngLocationString failed:", err.message);
     }
   }, [locationString]);
 

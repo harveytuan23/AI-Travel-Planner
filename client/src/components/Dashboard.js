@@ -89,23 +89,20 @@ function Dashboard() {
 
 
   const handleLocationsExtracted = async (locationStr) => {
-    console.log('📥 收到 Groq 回傳：', locationStr);
+    console.log('📥 received from Groq:', locationStr);
   
-    // ✅ 先儲存原始字串，給地圖畫線用
-    //setRawLocations(locationStr);
-  
-    // ✅ 再查詢詳細地點資訊
+
     if (!mapInstance.current) {
-      console.error("❌ 地圖尚未準備好");
+      console.error("❌ map is not ready");
       return;
     }
   
     try {
       const details = await fetchAllPlaceDetailsFromRawString(locationStr, mapInstance.current);
-      console.log('✅ 查詢結果：', details);
-      setLocations(details); // 顯示卡片用
+      console.log('✅ query result:', details);
+      setLocations(details);
     } catch (err) {
-      console.error('❌ 查詢失敗：', err);
+      console.error('❌ query failed:', err);
     }
   };  
 
@@ -132,12 +129,7 @@ function Dashboard() {
     } else {
       setSelectedDay(parseInt(value));
     }
-    
-    // // 这里需要一个延时，因为状态更新是异步的
-    // setTimeout(() => {
-    //   updateMapLocations(scheduleItems);
-    //   setMapUpdateTrigger(prev => prev + 1);
-    // }, 0);
+  
   };
 
   const handleDateChange = (date) => {
@@ -159,33 +151,33 @@ function Dashboard() {
   };
 
   const handleAddToSchedule = (place) => {
-    console.log("尝试添加地点到行程:", place);
+    console.log("try to add place to schedule:", place);
     
-    // 检查地点是否已经在行程中
+    // check if the place is already in the schedule
     const alreadyAdded = scheduleItems.some(item => 
       item.name === place.name && item.address === place.address && item.day === selectedDay
     );
     
     if (!alreadyAdded) {
-      // 将新地点添加到当前选定日期的行程中
+      // add the new place to the current selected day schedule
       const newScheduleItems = [...scheduleItems, {
         ...place,
-        day: selectedDay  // 将地点添加到当前选择的日期
+        day: selectedDay  // add the place to the current selected day
       }];
       
       setScheduleItems(newScheduleItems);
       updateMapLocations(newScheduleItems);
 
-      // 加這段！
+      // add this!
     fetchDurationsForSchedule(newScheduleItems).then((results) => {
       setDriveInfo(results);
-      console.log("🚗 各段行車時間：", results);
-      // 你可以 setState 儲存這些資訊顯示在 UI
+      console.log("🚗 driving time for each segment:", results);
+      // you can setState to store this information to display in the UI
     });
     
-      console.log(`成功添加 ${place.name} 到第 ${selectedDay} 天行程`, place);
+      console.log(`successfully add ${place.name} to the schedule of day ${selectedDay}`, place);
     } else {
-      // 已经添加过的情况
+      // the place is already in the schedule
       alert(`"${place.name}" already exists in the schedule!`);
     }
   };
@@ -226,7 +218,7 @@ function Dashboard() {
           distance: leg.distance.text,
         });
       } catch (err) {
-        console.warn(`查詢 ${from.name} → ${to.name} 時間失敗：`, err);
+        console.warn(`query ${from.name} → ${to.name} failed:`, err);
       }
     }
   
@@ -234,7 +226,7 @@ function Dashboard() {
   };  
 
   const updateMapLocations = (items) => {
-    // 筛选当前选择日期的行程项目
+    // filter the places of the current selected day
     const currentDayItems = items.filter(item => item.day === selectedDay);
     
     if (currentDayItems.length === 0) {
@@ -252,13 +244,12 @@ function Dashboard() {
       .filter(Boolean)
       .join('|');
     
-    console.log("立即更新位置字符串:", locationString);
+    console.log("update the location string immediately:", locationString);
     setTimeout(() => {
       setCurrentDayLocationString(locationString);
-    }, 100); // 稍微延遲 100ms 確保地圖準備好
+    }, 100); // delay 100ms to ensure the map is ready
   };
 
-  // 修改handleRemoveFromSchedule函数也触发地图更新
   const handleRemoveFromSchedule = (placeToRemove) => {
     setScheduleItems(prevItems => {
       const newItems = prevItems.filter(item => 
@@ -277,7 +268,7 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    updateMapLocations(scheduleItems); // 切換天數時更新地圖
+    updateMapLocations(scheduleItems);
   }, [selectedDay, scheduleItems]);
 
   return (
@@ -292,7 +283,7 @@ function Dashboard() {
       </div>
       
       <div className="dashboard-body">
-        {/* 地图部分 - 左侧 */}
+        {/* map section - left */}
         <div 
           className="map-section"
           style={{ 
@@ -308,7 +299,7 @@ function Dashboard() {
            />
         </div>
         
-        {/* 第一个分隔线 */}
+        {/* first divider */}
         <div 
           className="resize-divider"
           ref={divider1Ref}
@@ -418,7 +409,7 @@ function Dashboard() {
                         />
                       );
 
-                      // 插入行車時間（除了最後一個點）
+                      // insert driving time (except the last point)
                       if (idx < arr.length - 1) {
                         acc.push(
                           <div className="drive-info" key={`drive-${idx}`}>
@@ -467,7 +458,7 @@ function Dashboard() {
           </div>
         </div>
         
-        {/* 第二个分隔线 */}
+        {/* second divider */}
         <div 
           className="resize-divider"
           ref={divider2Ref}
@@ -477,7 +468,7 @@ function Dashboard() {
           <div className="divider-handle"></div>
         </div>
         
-        {/* 聊天部分 - 右侧 */}
+        {/* chat section - right */}
         <div 
           className="chat-wrapper"
           style={{ 

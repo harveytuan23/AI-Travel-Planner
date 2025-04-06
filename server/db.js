@@ -2,10 +2,10 @@
 const Database = require('better-sqlite3');
 const path = require('path');
 
-// 創建資料庫檔案（如果不存在會自動建立）
+// create the database file (if it doesn't exist, it will be created automatically)
 const db = new Database(path.resolve(__dirname, 'data.sqlite'));
 
-// 建立 users 表格（如果還沒建立過）
+// create the users table (if it doesn't exist, it will be created automatically)
 db.prepare(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

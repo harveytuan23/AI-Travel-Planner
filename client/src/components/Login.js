@@ -19,7 +19,6 @@ function Login() {
     setError('');
     setSuccess('');
     
-    // 基本验证
     if (!username.trim() || !password.trim()) {
       setError('Username and password are required');
       return;
@@ -39,7 +38,6 @@ function Login() {
 
       if (action === 'register' && response.data.message === 'Register success') {
         setSuccess('Registration successful ! You can now log in.');
-        // 清空表单
         setPassword('');
         setLoading(false);
         return;
@@ -52,8 +50,6 @@ function Login() {
     } catch (err) {
       let errorMessage;
       errorMessage = err.response?.data?.error;
-  
-      
       setError(errorMessage);
 
     } finally {
