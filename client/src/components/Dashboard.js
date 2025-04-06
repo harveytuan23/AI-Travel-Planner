@@ -175,8 +175,6 @@ function Dashboard() {
       
       setScheduleItems(newScheduleItems);
       updateMapLocations(newScheduleItems);
-      // 触发地图更新
-      setMapUpdateTrigger(prev => prev + 1);
 
       // 加這段！
     fetchDurationsForSchedule(newScheduleItems).then((results) => {
