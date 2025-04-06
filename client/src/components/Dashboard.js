@@ -11,7 +11,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 function Dashboard() {
   const [dividerPosition1, setDividerPosition1] = useState(25);
   const [dividerPosition2, setDividerPosition2] = useState(65); 
-  const [rawLocations, setRawLocations] = useState('');
+
   const [locations, setLocations] = useState([]);
   const [driveInfo, setDriveInfo] = useState([]);
   const mapInstance = useRef(null);
@@ -26,8 +26,6 @@ function Dashboard() {
   const [startDate, setStartDate] = useState(new Date());
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [scheduleItems, setScheduleItems] = useState([]);
-  const [travelMode, setTravelMode] = useState('DRIVING');
-  const [mapUpdateTrigger, setMapUpdateTrigger] = useState(0);
   const [currentDayLocationString, setCurrentDayLocationString] = useState('');
 
   useEffect(() => {
@@ -270,8 +268,6 @@ function Dashboard() {
       );
       updateMapLocations(newItems);
       
-      // 触发地图更新
-      setMapUpdateTrigger(prev => prev + 1);
       
       return newItems;
     });
