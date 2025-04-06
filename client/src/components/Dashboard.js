@@ -9,6 +9,7 @@ function Dashboard() {
   const divider1Ref = useRef(null);
   const divider2Ref = useRef(null);
   const dashboardRef = useRef(null);
+  const username = localStorage.getItem('username') || 'User';
   
 
   useEffect(() => {
@@ -64,10 +65,20 @@ function Dashboard() {
     document.removeEventListener('mouseup', handleDivider2MouseUp);
   };
 
+  const handleLogout = () => {
+    // Implement the logout functionality
+    console.log('Logging out');
+  };
+
   return (
     <div className="dashboard-container" ref={dashboardRef}>
       <div className="dashboard-header">
         <h1>Travel Plan</h1>
+        <div style={{ flexGrow: 1 }}></div>
+        <div className="user-section">
+          <span className="username-display">{username}</span>
+          <button className="logout-button" onClick={handleLogout}>Logout</button>
+        </div>
       </div>
       
       <div className="dashboard-body">
