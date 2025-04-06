@@ -14,12 +14,46 @@ function Dashboard() {
   const dashboardRef = useRef(null);
   const username = localStorage.getItem('username') || 'User';
   const navigate = useNavigate();
+  const [mapsLoaded, setMapsLoaded] = useState(false);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--divider1-position', `${dividerPosition1}%`);
     document.documentElement.style.setProperty('--divider2-position', `${dividerPosition2}%`);
   }, [dividerPosition1, dividerPosition2]);
   
+  // 动态加载 Google Maps API
+  useEffect(() => {
+    // 检查是否已加载
+    if (window.google && window.google.maps) {
+      setMapsLoaded(true);
+      return;
+    }
+    
+    const loadMapsAPI = () => {
+      const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&language=en`;
+      script.async = true;
+      script.defer = true;
+      
+      script.onload = () => {
+        setMapsLoaded(true);
+        console.log('Google Maps API loaded successfully');
+      };
+      
+      script.onerror = () => {
+        console.error('Google Maps API loading failed');
+      };
+      
+      document.head.appendChild(script);
+    };
+    
+    loadMapsAPI();
+    
+    return () => {
+    
+    };
+  }, []);
 
   const handleDivider1MouseDown = (e) => {
     e.preventDefault();
