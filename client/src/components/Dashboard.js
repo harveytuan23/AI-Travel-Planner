@@ -3,10 +3,12 @@ import Map from './Map';
 import ChatInterface from './ChatInterface';
 import './Dashboard.css';
 import { useNavigate } from 'react-router-dom';
+import PlaceCard from './PlaceCard';
 
 function Dashboard() {
   const [dividerPosition1, setDividerPosition1] = useState(25);
   const [dividerPosition2, setDividerPosition2] = useState(65); 
+  const [rawLocations, setRawLocations] = useState('');
   const divider1Ref = useRef(null);
   const divider2Ref = useRef(null);
   const dashboardRef = useRef(null);
@@ -91,7 +93,7 @@ function Dashboard() {
             width: `${dividerPosition1}%` 
           }}
         >
-          <Map />
+          <Map locationString={rawLocations} />
         </div>
         
         {/* 第一个分隔线 */}
@@ -127,7 +129,12 @@ function Dashboard() {
                 <span className="day-date">4/5 (星期六)</span>
               </div>
               
-              <button className="add-item-button">+ 添加行程项目</button>
+              {rawLocations && rawLocations.split(';').map((item, idx) => {
+              const [name, city] = item.trim().split('@');
+              if (!name || !city) return null;
+              return <PlaceCard key={idx} name={name.trim()} city={city.trim()} />;
+            })}
+
             </div>
           </div>
         </div>
@@ -150,7 +157,7 @@ function Dashboard() {
             left: `${dividerPosition2 + 1}%` 
           }}
         >
-          <ChatInterface />
+          <ChatInterface onLocationsExtracted={setRawLocations} />
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import './ChatInterface.css';
 
 
 // 聊天界面主组件
-function ChatInterface() {
+function ChatInterface({ onLocationsExtracted }) {
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -29,7 +29,7 @@ function ChatInterface() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     if (inputText.trim()) {
       const userMessage = {
         id: Date.now(),
@@ -37,39 +37,48 @@ function ChatInterface() {
         sender: 'user',
         timestamp: new Date().toISOString(),
       };
-      
+  
       setMessages(prevMessages => [...prevMessages, userMessage]);
       setInputText('');
       setTimeout(scrollToBottom, 100);
-      
+  
       try {
-        const response = await axios.post('http://localhost:3001/chat', { 
-          prompt: inputText 
+        // ✅ 呼叫後端 API 拿 Groq 回覆
+        const response = await axios.post('http://localhost:3001/chat', {
+          prompt: inputText
         }, {
           withCredentials: true
         });
-        
-        console.log('Received API response:', response.data);
-      
+  
+        const replyText = response.data;
+  
         const aiMessage = {
           id: Date.now() + 1,
-          text: response.data,
+          text: replyText,
           sender: 'ai',
           timestamp: new Date().toISOString(),
         };
-        
+  
+        // ✅ 如果是景點格式，回傳給 Dashboard
+        if (onLocationsExtracted && typeof replyText === 'string') {
+          const trimmed = replyText.trim();
+          if (trimmed.includes('@') && trimmed.includes(';')) {
+            onLocationsExtracted(trimmed);
+          }
+        }
+  
         setMessages(prevMessages => [...prevMessages, aiMessage]);
         setTimeout(scrollToBottom, 100);
       } catch (error) {
-        console.error('发送消息时出错:', error);
-        
+        console.error('發送訊息時出錯:', error);
+  
         const errorMessage = {
           id: Date.now() + 1,
-          text: "抱歉，发送消息时出现了问题。请稍后再试。",
+          text: "抱歉，發送訊息時出現錯誤，請稍後再試。",
           sender: 'ai',
           timestamp: new Date().toISOString(),
         };
-        
+  
         setMessages(prevMessages => [...prevMessages, errorMessage]);
         setTimeout(scrollToBottom, 100);
       }
