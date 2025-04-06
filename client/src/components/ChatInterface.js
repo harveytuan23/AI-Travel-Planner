@@ -50,7 +50,12 @@ function ChatInterface({ onLocationsExtracted }) {
           withCredentials: true
         });
   
-        const replyText = response.data;
+        let replyText;
+        if (response.data === "no plan") {
+          replyText = "Please provide places to visit.";
+        } else {
+          replyText = response.data;
+        }
         
         const aiMessage = {
           id: Date.now() + 1,
