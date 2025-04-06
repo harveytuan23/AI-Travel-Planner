@@ -374,8 +374,7 @@ function Dashboard() {
             {activeTab === 'recommend' && (
               <div className="recommend-container">
                 <div className="recommendations">
-                  {locations.map((place, idx) => {
-                    // 检查该地点是否已在行程中
+                  {locations.map((place, idx) => {  
                     const isInSchedule = scheduleItems.some(item => 
                       item.name === place.name && item.address === place.address
                     );
