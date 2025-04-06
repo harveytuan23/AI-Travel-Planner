@@ -4,6 +4,8 @@ import ChatInterface from './ChatInterface';
 import './Dashboard.css';
 import { useNavigate } from 'react-router-dom';
 import PlaceCard from './PlaceCard';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function Dashboard() {
   const [dividerPosition1, setDividerPosition1] = useState(25);
@@ -14,6 +16,11 @@ function Dashboard() {
   const dashboardRef = useRef(null);
   const username = localStorage.getItem('username') || 'User';
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('schedule');
+  const [days, setDays] = useState(3);
+  const [selectedDay, setSelectedDay] = useState(1);
+  const [startDate, setStartDate] = useState(new Date());
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--divider1-position', `${dividerPosition1}%`);
@@ -73,6 +80,56 @@ function Dashboard() {
     console.log('Logging out');
     navigate('/login');
   };
+  // need to change from api
+  const recommendedPlaces = [
+    { id: 1, name: "太平洋海岸公路", city: "加州" },
+    { id: 2, name: "红杉国家公园", city: "加州" },
+    { id: 3, name: "优胜美地国家公园", city: "加州" },
+    { id: 4, name: "金门大桥", city: "旧金山" }
+  ];
+
+  const handleAddDay = () => {
+    setDays(prev => prev + 1);
+    setSelectedDay(days + 1);
+  };
+
+  const handleDecreaseDay = () => {
+    if (days > 1) {
+      setDays(prev => prev - 1);
+      if (selectedDay > days - 1) {
+        setSelectedDay(days - 1);
+      }
+    }
+  };
+
+  const handleDayChange = (e) => {
+    const value = e.target.value;
+    if (value === 'add') {
+      handleAddDay();
+    } else if (value === 'decrease') {
+      handleDecreaseDay();
+    } else {
+      setSelectedDay(parseInt(value));
+    }
+  };
+
+  const handleDateChange = (date) => {
+    setStartDate(date);
+    setIsCalendarOpen(false);
+  };
+
+  const formatDate = (date, dayOffset = 0) => {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + dayOffset);
+    
+    const month = newDate.getMonth() + 1;
+    const day = newDate.getDate();
+    
+    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const weekday = weekdays[newDate.getDay()];
+    
+    return `${month}/${day} (${weekday})`;
+  };
 
   return (
     <div className="dashboard-container" ref={dashboardRef}>
@@ -106,7 +163,6 @@ function Dashboard() {
           <div className="divider-handle"></div>
         </div>
         
-        {/* 行程部分 - 中间 */}
         <div 
           className="itinerary-section"
           style={{ 
@@ -114,28 +170,99 @@ function Dashboard() {
             left: `${dividerPosition1 + 1}%` 
           }}
         >
-          <div className="itinerary-header">
-            <h2>行程</h2>
-          </div>
           
           <div className="itinerary-content">
             <div className="itinerary-tabs">
-              <button className="tab-button active">总览</button>
+              <button 
+                className={`tab-button ${activeTab === 'schedule' ? 'active' : ''}`}
+                onClick={() => setActiveTab('schedule')}
+              >
+                SCHEDULE
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'recommend' ? 'active' : ''}`}
+                onClick={() => setActiveTab('recommend')}
+              >
+                RECOMMENDED
+              </button>
             </div>
             
-            <div className="day-container">
-              <div className="day-header">
-                <span className="day-label">第1天</span>
-                <span className="day-date">4/5 (星期六)</span>
+            {activeTab === 'schedule' && (
+              <div className="day-container">
+                <div className="day-header">
+                  <div className="day-selector">
+                    <select 
+                      value={selectedDay} 
+                      onChange={handleDayChange}
+                      className="day-select"
+                    >
+                      {Array.from({ length: days }, (_, i) => (
+                        <option key={i+1} value={i+1}>Day {i+1}</option>
+                      ))}
+                      <option value="add">+ Add day</option>
+                    </select>
+                  </div>
+                  
+                  <div 
+                    className="calendar-icon" 
+                    onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                    title="Choose First Day"
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="24" 
+                      height="24" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    
+                    {isCalendarOpen && (
+                      <div className="date-picker-container">
+                        <DatePicker
+                          selected={startDate}
+                          onChange={handleDateChange}
+                          inline
+                          calendarClassName="custom-calendar"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  
+                  <span className="day-date">
+                    {formatDate(startDate, selectedDay - 1)}
+                  </span>
+                </div>
+                
+                <div className="day-content">
+                  {rawLocations && rawLocations.split(';').map((item, idx) => {
+                    const [name, city] = item.trim().split('@');
+                    if (!name || !city) return null;
+                    return <PlaceCard key={idx} name={name.trim()} city={city.trim()} />;
+                  })}
+                </div>
               </div>
-              
-              {rawLocations && rawLocations.split(';').map((item, idx) => {
-              const [name, city] = item.trim().split('@');
-              if (!name || !city) return null;
-              return <PlaceCard key={idx} name={name.trim()} city={city.trim()} />;
-            })}
-
-            </div>
+            )}
+            
+            {activeTab === 'recommend' && (
+              <div className="recommend-container">
+                <div className="recommendations">
+                {rawLocations && rawLocations.split(';').map((item, idx) => {
+                const [name, city] = item.trim().split('@');
+                if (!name || !city) return null;
+                return <PlaceCard key={idx} name={name.trim()} city={city.trim()} />;
+              })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
         

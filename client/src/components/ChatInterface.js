@@ -51,7 +51,7 @@ function ChatInterface({ onLocationsExtracted }) {
         });
   
         const replyText = response.data;
-  
+        
         const aiMessage = {
           id: Date.now() + 1,
           text: replyText,
@@ -59,7 +59,6 @@ function ChatInterface({ onLocationsExtracted }) {
           timestamp: new Date().toISOString(),
         };
   
-        // ✅ 如果是景點格式，回傳給 Dashboard
         if (onLocationsExtracted && typeof replyText === 'string') {
           const trimmed = replyText.trim();
           if (trimmed.includes('@') && trimmed.includes(';')) {
