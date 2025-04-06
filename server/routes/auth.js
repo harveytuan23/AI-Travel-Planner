@@ -8,39 +8,46 @@ router.post('/register', (req, res) => {
   const { username, password } = req.body;
 
   try {
-    console.log('Sending login request to:', '/api/auth/login');
+  
     const stmt = db.prepare('INSERT INTO users (username, password) VALUES (?, ?)');
     stmt.run(username, password);
-    res.json({ message: '註冊成功' });
+    res.json({ message: 'Register success' });
     console.log('Response received:', {
       status: response.status,
       headers: response.headers,
       data: response.data
     });
   } catch (err) {
-    // 判斷是否是 UNIQUE 失敗（重複 username）
+
     if (err.message.includes('UNIQUE constraint failed')) {
-      res.status(400).json({ error: '使用者已存在' });
+      res.status(400).json({ error: 'User already exists' });
     } else {
-      console.error('註冊錯誤：', err);
-      res.status(500).json({ error: '伺服器錯誤' });
+      console.error('Register error:', err);
+      res.status(500).json({ error: 'Server error' });
     }
   }
 });
 
 
-// 登入
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  const stmt = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?');
-  const user = stmt.get(username, password);
+  const userStmt = db.prepare('SELECT * FROM users WHERE username = ?');
+  const userExists = userStmt.get(username);
+
+ 
+  if (!userExists) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  const loginStmt = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?');
+  const user = loginStmt.get(username, password);
 
   if (!user) {
-    res.status(401).json({ error: '帳號或密碼錯誤' });
-  } else {
-    res.json({ message: '登入成功', username: user.username });
+    return res.status(401).json({ error: 'Password incorrect' });
   }
+
+  res.json({ message: 'Login success', username: user.username });
 });
 
 module.exports = router;
