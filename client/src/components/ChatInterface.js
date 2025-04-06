@@ -8,7 +8,7 @@ function ChatInterface({ onLocationsExtracted }) {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hello, how can I help you plan your trip?",
+      text: "Hello, how can I help you plan your trip? ( eg. I want to go to San Jose,CA from Los Angeles,CA.)",
       sender: "ai",
       timestamp: new Date().toISOString()
     }
