@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import axios from 'axios';
 
+require('dotenv').config({ path: '../.env' });
+
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -17,9 +19,10 @@ const Login = () => {
     setIsLoading(true);
   
     try {
-      console.log('Sending login request to:', 'http://localhost:3001/api/auth/login');
+      const server_port = process.env.SERVER_PORT;
+      console.log('Sending login request to:', 'http://localhost:'+server_port+'/api/auth/login');
       
-      const response = await axios.post('http://localhost:3001/api/auth/login', {
+      const response = await axios.post('http://localhost:'+server_port+'/api/auth/login', {
         username,
         password
       });
