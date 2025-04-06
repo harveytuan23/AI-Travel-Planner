@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+// import api from '../services/api';
 import './Login.css';
+import axios from 'axios';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -16,29 +17,55 @@ const Login = () => {
     setIsLoading(true);
   
     try {
-  
-      const response = await api.post('/auth/register', {
+      console.log('Sending login request to:', 'http://localhost:3001/api/auth/login');
+      
+      const response = await axios.post('http://localhost:3001/api/auth/login', {
         username,
         password
       });
       
-   
-      if (response.data.success) {
+      console.log('Response received:', {
+        status: response.status,
+        data: response.data
+      });
       
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('userId', response.data.userId);
-
-        alert(response.data.message);
+      if (response.status >= 200 && response.status < 300) {
+        console.log('Successful response status:', response.status);
+        console.log('Response data:', response.data);
+        
+        // Store username or any other data if available
+        if (response.data.username) {
+          localStorage.setItem('username', response.data.username);
+          console.log('Username stored in localStorage:', response.data.username);
+        }
+        
+        // Display success message if available
+        const message = response.data.message || 'Login successful';
+        console.log('Success message:', message);
+        alert(message);
+        
+        console.log('Navigating to dashboard...');
         navigate('/dashboard');
+      } else {
+        console.warn('Unexpected status code:', response.status);
+        setError(`Request returned a non-success status code: ${response.status}`);
       }
     } catch (error) {
-
-      if (error.response && error.response.data) {
-        setError(error.response.data.message);
+      console.error('Login request error:', error);
+      
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+        console.error('Status code:', error.response.status);
+        setError(error.response.data.message || `Request failed (${error.response.status})`);
+      } else if (error.request) {
+        console.error('No response received. Request details:', error.request);
+        setError('Server did not respond, please check network or server status');
       } else {
-        setError('Login failed, please try again later');
+        console.error('Request configuration error:', error.message);
+        setError('Request error: ' + error.message);
       }
     } finally {
+      console.log('Request handling completed, loading state set to false');
       setIsLoading(false);
     }
   };

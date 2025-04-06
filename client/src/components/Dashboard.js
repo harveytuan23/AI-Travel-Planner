@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Dashboard.css';
 import Map from './Map';
+import axios from 'axios';
 
 const Dashboard = () => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [files, setFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   
 
@@ -17,10 +19,11 @@ const Dashboard = () => {
     scrollToBottom();
   }, [messages]);
   
-  const handleTextSubmit = (e) => {
+  const handleTextSubmit = async (e) => {
     e.preventDefault();
     if (inputText.trim() === '' && files.length === 0) return;
     
+    setIsLoading(true);
 
     const newMessage = {
       id: Date.now(),
@@ -32,19 +35,38 @@ const Dashboard = () => {
     
     setMessages([...messages, newMessage]);
 
-    setInputText('');
-    setFiles([]);
-    
-    // 模拟AI回复
-    setTimeout(() => {
+    try {
+      console.log('Sending chat request with prompt:', inputText);
+      const response = await axios.post('http://localhost:3001/chat', {
+        prompt: inputText
+      });
+      
+      console.log('Received API response:', response.data);
+      
       const aiReply = {
         id: Date.now() + 1,
-        text: `Received your message: "${inputText}"${files.length > 0 ? ` and ${files.length} files` : ''}`,
+        text: response.data,
         sender: 'ai',
         timestamp: new Date().toLocaleTimeString()
       };
+      
       setMessages(prevMessages => [...prevMessages, aiReply]);
-    }, 1000);
+    } catch (error) {
+      console.error('Error calling chat API:', error);
+      
+      const errorReply = {
+        id: Date.now() + 1,
+        text: `Sorry, I couldn't process your message. Error: ${error.message}`,
+        sender: 'ai',
+        timestamp: new Date().toLocaleTimeString()
+      };
+      
+      setMessages(prevMessages => [...prevMessages, errorReply]);
+    } finally {
+      setInputText('');
+      setFiles([]);
+      setIsLoading(false);
+    }
   };
   
   const handleFileChange = (e) => {
@@ -76,6 +98,7 @@ const Dashboard = () => {
   
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     window.location.href = '/login';
   };
   
@@ -83,7 +106,10 @@ const Dashboard = () => {
     <div className="dashboard-container">
       <header className="dashboard-header">
         <h1>Travel Planer</h1>
-        <button className="logout-button" onClick={handleLogout}>Logout</button>
+        <div className="user-info">
+          <span>{localStorage.getItem('username') || 'User'}</span>
+          <button className="logout-button" onClick={handleLogout}>Logout</button>
+        </div>
       </header>
       
       <div className="dashboard-content">
@@ -99,8 +125,8 @@ const Dashboard = () => {
                   <p>{message.text}</p>
                   {message.files && message.files.map((file, index) => (
                     <div key={index} className="message-file">
-                      {file.type.startsWith('image/') ? (
-                        <img src={URL.createObjectURL(file)} alt={file.name} />
+                      {file.preview ? (
+                        <img src={file.preview} alt={file.name} />
                       ) : (
                         <div className="file-info">
                           <span className="file-icon">📄</span>
@@ -155,14 +181,15 @@ const Dashboard = () => {
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Add your Plan..."
                 className="chat-text-input"
+                disabled={isLoading}
               />
               
               <button 
                 type="submit" 
                 className="send-button"
-                disabled={inputText.trim() === '' && files.length === 0}
+                disabled={isLoading || (inputText.trim() === '' && files.length === 0)}
               >
-                Send
+                {isLoading ? 'Sending...' : 'Send'}
               </button>
             </div>
           </form>

@@ -8,9 +8,15 @@ router.post('/register', (req, res) => {
   const { username, password } = req.body;
 
   try {
+    console.log('Sending login request to:', '/api/auth/login');
     const stmt = db.prepare('INSERT INTO users (username, password) VALUES (?, ?)');
     stmt.run(username, password);
     res.json({ message: '註冊成功' });
+    console.log('Response received:', {
+      status: response.status,
+      headers: response.headers,
+      data: response.data
+    });
   } catch (err) {
     // 判斷是否是 UNIQUE 失敗（重複 username）
     if (err.message.includes('UNIQUE constraint failed')) {
