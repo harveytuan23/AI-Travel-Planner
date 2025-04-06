@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { loadGoogleMapsApi } from '../utils/loadGoogleMapsApi';
-import { parseLocationString } from '../utils/locationParser';
+import { parseLatLngLocationString } from '../utils/locationParser';
 
 const Map = ({ locationString, mapInstance }) => {  
   const mapRef = useRef(null);
@@ -27,39 +27,66 @@ const Map = ({ locationString, mapInstance }) => {
   
 
   useEffect(() => {
-    if (!locationString || !directionsRendererRef.current) {
-      console.log("❌ 尚未準備好畫線", locationString, directionsRendererRef.current);
+    if (!locationString || !mapInstance.current) {
+      console.log("❌ 尚未準備好地圖", locationString, mapInstance.current);
       return;
     }
   
-    console.log("📍 準備畫線，locationString =", locationString);
+    const { google } = window;
+  
+    // 移除先前的路線或 Marker
+    if (directionsRendererRef.current) {
+      directionsRendererRef.current.setMap(null);
+    }
+  
+    // 解析點的字串格式
+    const parts = locationString.split('|').map(p => p.trim()).filter(Boolean);
+    if (parts.length === 1) {
+      // 只有一個地點，顯示 Marker
+      const [name, coord] = parts[0].split(':');
+      const [lat, lng] = coord.split(',').map(Number);
+  
+      const marker = new google.maps.Marker({
+        position: { lat, lng },
+        map: mapInstance.current,
+        title: name,
+      });
+  
+      // 中心移到該地點
+      mapInstance.current.setCenter({ lat, lng });
+      mapInstance.current.setZoom(14);
+  
+      return; // ✅ 不跑下面畫線
+    }
   
     try {
-      const { origin, destination, waypoints } = parseLocationString(locationString);
-      console.log("✅ 解析後：", { origin, destination, waypoints });
+      // 多於一個點才畫路線
+      const { origin, destination, waypoints } = parseLatLngLocationString(locationString);
   
-      const directionsService = new window.google.maps.DirectionsService();
+      const directionsService = new google.maps.DirectionsService();
+      const renderer = new google.maps.DirectionsRenderer();
+      directionsRendererRef.current = renderer;
+      renderer.setMap(mapInstance.current);
+  
       directionsService.route(
         {
           origin,
           destination,
           waypoints,
-          travelMode: window.google.maps.TravelMode.DRIVING,
+          travelMode: google.maps.TravelMode.DRIVING,
         },
         (result, status) => {
           if (status === 'OK') {
-            console.log("✅ 成功取得路線結果");
-            directionsRendererRef.current.setDirections(result);
+            renderer.setDirections(result);
           } else {
             console.error("❌ Google Directions 取得失敗:", status);
           }
         }
       );
     } catch (err) {
-      console.warn("⚠️ parseLocationString 發生錯誤:", err.message);
+      console.warn("⚠️ parseLatLngLocationString 發生錯誤:", err.message);
     }
   }, [locationString]);
-  
 
   return (
     <div ref={mapRef} style={{ width: '100%', height: '100%' }} />

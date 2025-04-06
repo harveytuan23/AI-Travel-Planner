@@ -93,7 +93,7 @@ function Dashboard() {
     console.log('📥 收到 Groq 回傳：', locationStr);
   
     // ✅ 先儲存原始字串，給地圖畫線用
-    setRawLocations(locationStr);
+    //setRawLocations(locationStr);
   
     // ✅ 再查詢詳細地點資訊
     if (!mapInstance.current) {
@@ -206,7 +206,9 @@ function Dashboard() {
       .join('|');
     
     console.log("立即更新位置字符串:", locationString);
-    setCurrentDayLocationString(locationString);
+    setTimeout(() => {
+      setCurrentDayLocationString(locationString);
+    }, 100); // 稍微延遲 100ms 確保地圖準備好
   };
 
   // 修改handleRemoveFromSchedule函数也触发地图更新
@@ -250,7 +252,7 @@ function Dashboard() {
         >
            <Map 
              key={`map-${scheduleItems.length}-${selectedDay}`}
-             locationString={rawLocations} 
+             locationString={currentDayLocationString} 
              mapInstance={mapInstance} 
              scheduleItems={scheduleItems}
              selectedDay={selectedDay}
