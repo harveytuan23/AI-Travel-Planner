@@ -134,11 +134,11 @@ function Dashboard() {
       setSelectedDay(parseInt(value));
     }
     
-    // 这里需要一个延时，因为状态更新是异步的
-    setTimeout(() => {
-      updateMapLocations(scheduleItems);
-      setMapUpdateTrigger(prev => prev + 1);
-    }, 0);
+    // // 这里需要一个延时，因为状态更新是异步的
+    // setTimeout(() => {
+    //   updateMapLocations(scheduleItems);
+    //   setMapUpdateTrigger(prev => prev + 1);
+    // }, 0);
   };
 
   const handleDateChange = (date) => {
@@ -230,6 +230,10 @@ function Dashboard() {
   useEffect(() => {
     updateMapLocations(scheduleItems);
   }, []);
+
+  useEffect(() => {
+    updateMapLocations(scheduleItems); // 切換天數時更新地圖
+  }, [selectedDay, scheduleItems]);
 
   return (
     <div className="dashboard-container" ref={dashboardRef}>

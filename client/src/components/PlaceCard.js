@@ -31,7 +31,11 @@ function PlaceCard({ name, city, address, rating, phone, url, location, onAddToS
       
       <h3 className="place-name">
         {/* 如果有提供序号，则在名称前显示序号 */}
-        {index !== undefined && <span className="place-index">{index}. </span>}
+        {index !== undefined && (
+        <span className="place-index">
+            {String.fromCharCode(65 + index - 1)}. {/* A=65 */}
+        </span>
+        )}
         {name}
       </h3>
       
