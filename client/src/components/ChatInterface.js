@@ -51,10 +51,12 @@ function ChatInterface({ onLocationsExtracted }) {
         });
   
         let replyText;
+        let TextforTrim;
         if (response.data === "no plan") {
           replyText = "Please provide places to visit.";
         } else {
-          replyText = response.data;
+          replyText = "Recommended plan are listed on the left.";
+          TextforTrim = response.data;
         }
         
         const aiMessage = {
@@ -64,8 +66,8 @@ function ChatInterface({ onLocationsExtracted }) {
           timestamp: new Date().toISOString(),
         };
   
-        if (onLocationsExtracted && typeof replyText === 'string') {
-          const trimmed = replyText.trim();
+        if (onLocationsExtracted && typeof TextforTrim === 'string') {
+          const trimmed = TextforTrim.trim();
           if (trimmed.includes('@') && trimmed.includes(';')) {
             onLocationsExtracted(trimmed);
           }
