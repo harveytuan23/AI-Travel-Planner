@@ -3,7 +3,7 @@
   --text-color: #333333;
   --border-color: #e0e0e0;
   --divider1-position: 25%;
-  --divider2-position: 65%;
+  --divider2-position: 75%;
   --header-height: 60px;
   --primary-color: #ee400f;
   --secondary-color: #ffd9bc;
@@ -319,7 +319,7 @@ hr {
 }
 .calendar-icon:hover {
   background-color: #fffcfc;
-  color: #ff612d;
+  color: #fe5b20;
   border-color: #d0d0d0;
 }
 

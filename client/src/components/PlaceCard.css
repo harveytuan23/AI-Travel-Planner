@@ -1,27 +1,148 @@
-/* src/components/PlaceCard.css */
 .place-card {
-    background-color: #f5f5f5;
-    padding: 12px 16px;
-    margin: 10px 0;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .place-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-  
-  .place-name {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-  }
-  
-  .place-city {
-    font-size: 14px;
-    color: #555;
-    margin-top: 4px;
-  }
-  
+  position: relative;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-bottom: 2px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: auto;
+  min-height: fit-content;
+}
+.recommend-card {
+  width: 40%;
+  aspect-ratio: 2 / 2;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  min-height: fit-content;
+}
+.schedule-card {
+  width: 90%;
+  height: 65px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  padding: 15px;
+  overflow: auto;
+  min-height: fit-content;
+}
+
+.recommend-container {
+  width: 95%;
+  padding: 0 10px;
+}
+
+.recommendations {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  justify-content: space-between !important;
+  gap: 10px;
+  width: 100%;
+}
+
+.place-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.place-name {
+  margin: 0 0 3px 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+}
+
+.place-city {
+  margin: 0 0 5px 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.place-address, .place-rating, .place-phone {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #555;
+  word-break: break-word;
+}
+
+.info-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.place-url a {
+  display: inline-block;
+  margin-top: 10px;
+  color: #4a4b4c ;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+/* 序号样式 */
+.place-index {
+  display: inline-block;
+  margin-right: 4px;
+  font-weight: bold;
+  color: #fe8020;
+}
+
+/* 按钮样式 */
+.add-to-schedule-btn, .remove-from-schedule-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #f5a06e;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.add-to-schedule-btn {
+  background-color: #ffd9bc;
+}
+
+.add-to-schedule-btn:hover {
+  background-color: #fd5425;
+  transform: scale(1.1);
+}
+
+.remove-from-schedule-btn {
+  background-color: #ffd9bc;
+}
+
+.remove-from-schedule-btn:hover {
+  background-color: #fd5425;
+  transform: scale(1.1);
+}
+
+.view-details-btn {
+  margin-top: auto;
+  padding: 6px 10px;
+  background-color: #2196F3;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+  transition: background-color 0.3s;
+  align-self: flex-start;
+}
+
+.view-details-btn:hover {
+  background-color: #fa8a00;
+}

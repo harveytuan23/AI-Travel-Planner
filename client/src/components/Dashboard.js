@@ -24,6 +24,10 @@ function Dashboard() {
   const [selectedDay, setSelectedDay] = useState(1);
   const [startDate, setStartDate] = useState(new Date());
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [scheduleItems, setScheduleItems] = useState([]);
+  const [travelMode, setTravelMode] = useState('DRIVING');
+  const [mapUpdateTrigger, setMapUpdateTrigger] = useState(0);
+  const [currentDayLocationString, setCurrentDayLocationString] = useState('');
 
   useEffect(() => {
     document.documentElement.style.setProperty('--divider1-position', `${dividerPosition1}%`);
@@ -83,13 +87,7 @@ function Dashboard() {
     console.log('Logging out');
     navigate('/login');
   };
-  // need to change from api
-  const recommendedPlaces = [
-    { id: 1, name: "太平洋海岸公路", city: "加州" },
-    { id: 2, name: "红杉国家公园", city: "加州" },
-    { id: 3, name: "优胜美地国家公园", city: "加州" },
-    { id: 4, name: "金门大桥", city: "旧金山" }
-  ];
+
 
   const handleLocationsExtracted = async (locationStr) => {
     console.log('📥 收到 Groq 回傳：', locationStr);
@@ -135,6 +133,12 @@ function Dashboard() {
     } else {
       setSelectedDay(parseInt(value));
     }
+    
+    // 这里需要一个延时，因为状态更新是异步的
+    setTimeout(() => {
+      updateMapLocations(scheduleItems);
+      setMapUpdateTrigger(prev => prev + 1);
+    }, 0);
   };
 
   const handleDateChange = (date) => {
@@ -155,6 +159,76 @@ function Dashboard() {
     return `${month}/${day} (${weekday})`;
   };
 
+  const handleAddToSchedule = (place) => {
+    console.log("尝试添加地点到行程:", place);
+    
+    // 检查地点是否已经在行程中
+    const alreadyAdded = scheduleItems.some(item => 
+      item.name === place.name && item.address === place.address && item.day === selectedDay
+    );
+    
+    if (!alreadyAdded) {
+      // 将新地点添加到当前选定日期的行程中
+      const newScheduleItems = [...scheduleItems, {
+        ...place,
+        day: selectedDay  // 将地点添加到当前选择的日期
+      }];
+      
+      setScheduleItems(newScheduleItems);
+      updateMapLocations(newScheduleItems);
+      // 触发地图更新
+      setMapUpdateTrigger(prev => prev + 1);
+    
+      
+      console.log(`成功添加 ${place.name} 到第 ${selectedDay} 天行程`, place);
+    } else {
+      // 已经添加过的情况
+      alert(`"${place.name}" already exists in the schedule!`);
+    }
+  };
+  const updateMapLocations = (items) => {
+    // 筛选当前选择日期的行程项目
+    const currentDayItems = items.filter(item => item.day === selectedDay);
+    
+    if (currentDayItems.length === 0) {
+      setCurrentDayLocationString('');
+      return;
+    }
+    
+    const locationString = currentDayItems
+      .map(item => {
+        if (item.location) {
+          return `${item.name}:${item.location.lat},${item.location.lng}`;
+        }
+        return null;
+      })
+      .filter(Boolean)
+      .join('|');
+    
+    console.log("立即更新位置字符串:", locationString);
+    setCurrentDayLocationString(locationString);
+  };
+
+  // 修改handleRemoveFromSchedule函数也触发地图更新
+  const handleRemoveFromSchedule = (placeToRemove) => {
+    setScheduleItems(prevItems => {
+      const newItems = prevItems.filter(item => 
+        !(item.name === placeToRemove.name && item.address === placeToRemove.address)
+      );
+      updateMapLocations(newItems);
+      
+      // 触发地图更新
+      setMapUpdateTrigger(prev => prev + 1);
+      
+      return newItems;
+    });
+  };
+
+
+  useEffect(() => {
+    updateMapLocations(scheduleItems);
+  }, []);
+
   return (
     <div className="dashboard-container" ref={dashboardRef}>
       <div className="dashboard-header">
@@ -174,7 +248,13 @@ function Dashboard() {
             width: `${dividerPosition1}%` 
           }}
         >
-           <Map locationString={rawLocations} mapInstance={mapInstance} />
+           <Map 
+             key={`map-${scheduleItems.length}-${selectedDay}`}
+             locationString={rawLocations} 
+             mapInstance={mapInstance} 
+             scheduleItems={scheduleItems}
+             selectedDay={selectedDay}
+           />
         </div>
         
         {/* 第一个分隔线 */}
@@ -224,6 +304,7 @@ function Dashboard() {
                         <option key={i+1} value={i+1}>Day {i+1}</option>
                       ))}
                       <option value="add">+ Add day</option>
+                      {days > 1 && <option value="decrease">- Remove day</option>}
                     </select>
                   </div>
                   
@@ -267,11 +348,25 @@ function Dashboard() {
                 </div>
                 
                 <div className="day-content">
-                  {rawLocations && rawLocations.split(';').map((item, idx) => {
-                    const [name, city] = item.trim().split('@');
-                    if (!name || !city) return null;
-                    return <PlaceCard key={idx} name={name.trim()} city={city.trim()} />;
-                  })}
+                  {scheduleItems
+                    .filter(item => item.day === selectedDay)
+                    .map((item, idx) => (
+                      <PlaceCard 
+                        key={idx} 
+                        name={item.name} 
+                        address={item.address}
+                        rating={item.rating}
+                        phone={item.phone}
+                        url={item.url}
+                        location={item.location}
+                        onRemoveFromSchedule={handleRemoveFromSchedule}
+                        isInSchedule={true}
+                        index={idx + 1}
+                        viewType="schedule"
+                      />
+                    ))}
+                    
+                  
                 </div>
               </div>
             )}
@@ -279,11 +374,27 @@ function Dashboard() {
             {activeTab === 'recommend' && (
               <div className="recommend-container">
                 <div className="recommendations">
-                {rawLocations && rawLocations.split(';').map((item, idx) => {
-                const [name, city] = item.trim().split('@');
-                if (!name || !city) return null;
-                return <PlaceCard key={idx} name={name.trim()} city={city.trim()} />;
-              })}
+                  {locations.map((place, idx) => {
+                    // 检查该地点是否已在行程中
+                    const isInSchedule = scheduleItems.some(item => 
+                      item.name === place.name && item.address === place.address
+                    );
+                    
+                    return (
+                      <PlaceCard 
+                        key={idx} 
+                        name={place.name} 
+                        address={place.address}
+                        rating={place.rating}
+                        phone={place.phone}
+                        url={place.url}
+                        location={place.location}
+                        onAddToSchedule={handleAddToSchedule}
+                        isInSchedule={isInSchedule}
+                        viewType="recommend"
+                      />
+                    );
+                  })}
                 </div>
               </div>
             )}
