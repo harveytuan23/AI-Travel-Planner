@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { loadGoogleMapsApi } from '../utils/loadGoogleMapsApi';
 import { parseLocationString } from '../utils/locationParser';
 
 const Map = ({ locationString }) => {
@@ -7,16 +8,21 @@ const Map = ({ locationString }) => {
   const directionsRendererRef = useRef(null);
 
   useEffect(() => {
-    if (!mapRef.current) return;
+    loadGoogleMapsApi()
+      .then(() => {
+        if (!mapRef.current) return;
 
-    // 初始化地圖
-    mapInstance.current = new window.google.maps.Map(mapRef.current, {
-      center: { lat: 45.5122, lng: -122.6587 }, // Portland
-      zoom: 10,
-    });
+        mapInstance.current = new window.google.maps.Map(mapRef.current, {
+          center: { lat: 45.5122, lng: -122.6587 },
+          zoom: 10,
+        });
 
-    directionsRendererRef.current = new window.google.maps.DirectionsRenderer();
-    directionsRendererRef.current.setMap(mapInstance.current);
+        directionsRendererRef.current = new window.google.maps.DirectionsRenderer();
+        directionsRendererRef.current.setMap(mapInstance.current);
+      })
+      .catch((err) => {
+        console.error('Google Maps 載入失敗:', err);
+      });
   }, []);
 
   useEffect(() => {
