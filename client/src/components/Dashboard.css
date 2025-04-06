@@ -411,3 +411,14 @@ hr {
   font-size: 20px;
   color: #ffffff;
 }
+
+.drive-info {
+  margin: 8px 0 16px;
+  padding: 6px 12px;
+  background-color: #f4f4f4;
+  border-left: 4px solid #ffa500;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}

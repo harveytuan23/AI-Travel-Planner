@@ -13,6 +13,7 @@ function Dashboard() {
   const [dividerPosition2, setDividerPosition2] = useState(65); 
   const [rawLocations, setRawLocations] = useState('');
   const [locations, setLocations] = useState([]);
+  const [driveInfo, setDriveInfo] = useState([]);
   const mapInstance = useRef(null);
   const divider1Ref = useRef(null);
   const divider2Ref = useRef(null);
@@ -178,14 +179,64 @@ function Dashboard() {
       updateMapLocations(newScheduleItems);
       // 触发地图更新
       setMapUpdateTrigger(prev => prev + 1);
+
+      // 加這段！
+    fetchDurationsForSchedule(newScheduleItems).then((results) => {
+      setDriveInfo(results);
+      console.log("🚗 各段行車時間：", results);
+      // 你可以 setState 儲存這些資訊顯示在 UI
+    });
     
-      
       console.log(`成功添加 ${place.name} 到第 ${selectedDay} 天行程`, place);
     } else {
       // 已经添加过的情况
       alert(`"${place.name}" already exists in the schedule!`);
     }
   };
+
+  const fetchDurationsForSchedule = async (items) => {
+    const currentDayItems = items.filter(item => item.day === selectedDay);
+    const directionsService = new window.google.maps.DirectionsService();
+    const results = [];
+  
+    for (let i = 0; i < currentDayItems.length - 1; i++) {
+      const from = currentDayItems[i];
+      const to = currentDayItems[i + 1];
+  
+      if (!from.location || !to.location) continue;
+  
+      const request = {
+        origin: from.location,
+        destination: to.location,
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      };
+  
+      try {
+        const result = await new Promise((resolve, reject) => {
+          directionsService.route(request, (res, status) => {
+            if (status === 'OK') {
+              resolve(res);
+            } else {
+              reject(status);
+            }
+          });
+        });
+  
+        const leg = result.routes[0].legs[0];
+        results.push({
+          from: from.name,
+          to: to.name,
+          duration: leg.duration.text,
+          distance: leg.distance.text,
+        });
+      } catch (err) {
+        console.warn(`查詢 ${from.name} → ${to.name} 時間失敗：`, err);
+      }
+    }
+  
+    return results;
+  };  
+
   const updateMapLocations = (items) => {
     // 筛选当前选择日期的行程项目
     const currentDayItems = items.filter(item => item.day === selectedDay);
@@ -356,23 +407,39 @@ function Dashboard() {
                 <div className="day-content">
                   {scheduleItems
                     .filter(item => item.day === selectedDay)
-                    .map((item, idx) => (
-                      <PlaceCard 
-                        key={idx} 
-                        name={item.name} 
-                        address={item.address}
-                        rating={item.rating}
-                        phone={item.phone}
-                        url={item.url}
-                        location={item.location}
-                        onRemoveFromSchedule={handleRemoveFromSchedule}
-                        isInSchedule={true}
-                        index={idx + 1}
-                        viewType="schedule"
-                      />
-                    ))}
-                    
-                  
+                    .reduce((acc, item, idx, arr) => {
+                      acc.push(
+                        <PlaceCard 
+                          key={`place-${idx}`}
+                          name={item.name} 
+                          address={item.address}
+                          rating={item.rating}
+                          phone={item.phone}
+                          url={item.url}
+                          location={item.location}
+                          onRemoveFromSchedule={handleRemoveFromSchedule}
+                          isInSchedule={true}
+                          index={String.fromCharCode(65 + idx)} // A, B, C...
+                          viewType="schedule"
+                        />
+                      );
+
+                      // 插入行車時間（除了最後一個點）
+                      if (idx < arr.length - 1) {
+                        acc.push(
+                          <div className="drive-info" key={`drive-${idx}`}>
+                            🚗 Driving time: {
+                              driveInfo[idx] 
+                                ? `${driveInfo[idx].duration}（${driveInfo[idx].distance}）` 
+                                : 'Loading...'
+                            }
+                          </div>
+                        );
+                      }
+
+                      return acc;
+                    }, [])
+                  }
                 </div>
               </div>
             )}
