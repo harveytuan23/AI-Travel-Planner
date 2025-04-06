@@ -646,7 +646,6 @@ hr {
   stroke-linecap: round;
   stroke-linejoin: round;
   display: block;
-  vertical-align: middle;
 }
 
 .chat-input {

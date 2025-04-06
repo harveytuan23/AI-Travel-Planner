@@ -11,14 +11,9 @@ root.render(
   </React.StrictMode>
 );
 
-require('dotenv').config({ path: '../.env' });
+//require('dotenv').config({ path: '../.env' });
 
-App.get('/', (req, res) => {
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-  res.render('index.html', { 
-    googleMapsApiKey: apiKey 
-  });
-});
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
