@@ -5,15 +5,15 @@ import Dashboard from './components/Dashboard';
 import './App.css';
 
 // 简单的身份验证检查
-const isAuthenticated = () => !!localStorage.getItem('token');
+// const isAuthenticated = () => !!localStorage.getItem('token');
 
 // 保护路由的组件
-const ProtectedRoute = ({ children }) => {
-  if (!isAuthenticated()) {
-    return <Navigate to="/login" />;
-  }
-  return children;
-};
+// const ProtectedRoute = ({ children }) => {
+//   if (!isAuthenticated()) {
+//     return <Navigate to="/login" />;
+//   }
+//   return children;
+// };
 
 function App() {
   return (

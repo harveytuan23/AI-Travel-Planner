@@ -1,202 +1,147 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './Dashboard.css';
+import React, { useState, useEffect, useRef } from 'react';
 import Map from './Map';
-import axios from 'axios';
+import ChatInterface from './ChatInterface';
+import './Dashboard.css';
 
-const Dashboard = () => {
-  const [messages, setMessages] = useState([]);
-  const [inputText, setInputText] = useState('');
-  const [files, setFiles] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef(null);
+function Dashboard() {
+  const [dividerPosition1, setDividerPosition1] = useState(25);
+  const [dividerPosition2, setDividerPosition2] = useState(65); 
+  const divider1Ref = useRef(null);
+  const divider2Ref = useRef(null);
+  const dashboardRef = useRef(null);
   
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-  
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    document.documentElement.style.setProperty('--divider1-position', `${dividerPosition1}%`);
+    document.documentElement.style.setProperty('--divider2-position', `${dividerPosition2}%`);
+  }, [dividerPosition1, dividerPosition2]);
   
-  const handleTextSubmit = async (e) => {
+
+  const handleDivider1MouseDown = (e) => {
     e.preventDefault();
-    if (inputText.trim() === '' && files.length === 0) return;
-    
-    setIsLoading(true);
+    document.addEventListener('mousemove', handleDivider1MouseMove);
+    document.addEventListener('mouseup', handleDivider1MouseUp);
+  };
 
-    const newMessage = {
-      id: Date.now(),
-      text: inputText,
-      files: files,
-      sender: 'user',
-      timestamp: new Date().toLocaleTimeString()
-    };
-    
-    setMessages([...messages, newMessage]);
-
-    try {
-      console.log('Sending chat request with prompt:', inputText);
-      const response = await axios.post('http://localhost:3001/chat', {
-        prompt: inputText
-      });
+  const handleDivider1MouseMove = (e) => {
+    if (dashboardRef.current) {
+      const dashboardRect = dashboardRef.current.getBoundingClientRect();
+      const newPosition = ((e.clientX - dashboardRect.left) / dashboardRect.width) * 100;
       
-      console.log('Received API response:', response.data);
-      
-      const aiReply = {
-        id: Date.now() + 1,
-        text: response.data,
-        sender: 'ai',
-        timestamp: new Date().toLocaleTimeString()
-      };
-      
-      setMessages(prevMessages => [...prevMessages, aiReply]);
-    } catch (error) {
-      console.error('Error calling chat API:', error);
-      
-      const errorReply = {
-        id: Date.now() + 1,
-        text: `Sorry, I couldn't process your message. Error: ${error.message}`,
-        sender: 'ai',
-        timestamp: new Date().toLocaleTimeString()
-      };
-      
-      setMessages(prevMessages => [...prevMessages, errorReply]);
-    } finally {
-      setInputText('');
-      setFiles([]);
-      setIsLoading(false);
+      if (newPosition > 10 && newPosition < dividerPosition2 - 10) {
+        setDividerPosition1(newPosition);
+        document.documentElement.style.setProperty('--divider1-position', `${newPosition}%`);
+      }
     }
   };
-  
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    
-    const fileObjects = selectedFiles.map(file => ({
-      name: file.name,
-      type: file.type,
-      preview: file.type.startsWith('image/') 
-        ? URL.createObjectURL(file) 
-        : null,
-      size: (file.size / 1024).toFixed(2) + ' KB',
-      file: file
-    }));
-    
-    setFiles([...files, ...fileObjects]);
+
+  const handleDivider1MouseUp = () => {
+    document.removeEventListener('mousemove', handleDivider1MouseMove);
+    document.removeEventListener('mouseup', handleDivider1MouseUp);
   };
   
-  const removeFile = (index) => {
-    const newFiles = [...files];
-    
-    if (newFiles[index].preview) {
-      URL.revokeObjectURL(newFiles[index].preview);
+
+  const handleDivider2MouseDown = (e) => {
+    e.preventDefault();
+    document.addEventListener('mousemove', handleDivider2MouseMove);
+    document.addEventListener('mouseup', handleDivider2MouseUp);
+  };
+
+  const handleDivider2MouseMove = (e) => {
+    if (dashboardRef.current) {
+      const dashboardRect = dashboardRef.current.getBoundingClientRect();
+      const newPosition = ((e.clientX - dashboardRect.left) / dashboardRect.width) * 100;
+ 
+      if (newPosition > dividerPosition1 + 10 && newPosition < 90) {
+        setDividerPosition2(newPosition);
+        document.documentElement.style.setProperty('--divider2-position', `${newPosition}%`);
+      }
     }
-    
-    newFiles.splice(index, 1);
-    setFiles(newFiles);
   };
-  
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    window.location.href = '/login';
+
+  const handleDivider2MouseUp = () => {
+    document.removeEventListener('mousemove', handleDivider2MouseMove);
+    document.removeEventListener('mouseup', handleDivider2MouseUp);
   };
-  
+
   return (
-    <div className="dashboard-container">
-      <header className="dashboard-header">
-        <h1>Travel Planer</h1>
-        <div className="user-info">
-          <span>{localStorage.getItem('username') || 'User'}</span>
-          <button className="logout-button" onClick={handleLogout}>Logout</button>
-        </div>
-      </header>
+    <div className="dashboard-container" ref={dashboardRef}>
+      <div className="dashboard-header">
+        <h1>Travel Plan</h1>
+      </div>
       
-      <div className="dashboard-content">
-        <div className="map-section">
+      <div className="dashboard-body">
+        {/* 地图部分 - 左侧 */}
+        <div 
+          className="map-section"
+          style={{ 
+            width: `${dividerPosition1}%` 
+          }}
+        >
           <Map />
         </div>
         
-        <div className="chat-container">
-          <div className="messages-container">
-            {messages.map((message) => (
-              <div key={message.id} className={`message ${message.sender}`}>
-                <div className="message-content">
-                  <p>{message.text}</p>
-                  {message.files && message.files.map((file, index) => (
-                    <div key={index} className="message-file">
-                      {file.preview ? (
-                        <img src={file.preview} alt={file.name} />
-                      ) : (
-                        <div className="file-info">
-                          <span className="file-icon">📄</span>
-                          <span className="file-name">{file.name}</span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <span className="timestamp">{message.timestamp}</span>
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
+        {/* 第一个分隔线 */}
+        <div 
+          className="resize-divider"
+          ref={divider1Ref}
+          onMouseDown={handleDivider1MouseDown}
+          style={{ left: `${dividerPosition1}%` }}
+        >
+          <div className="divider-handle"></div>
+        </div>
+        
+        {/* 行程部分 - 中间 */}
+        <div 
+          className="itinerary-section"
+          style={{ 
+            width: `${dividerPosition2 - dividerPosition1 - 1}%`,
+            left: `${dividerPosition1 + 1}%` 
+          }}
+        >
+          <div className="itinerary-header">
+            <h2>行程</h2>
           </div>
           
-          <form className="chat-input-form" onSubmit={handleTextSubmit}>
-            <div className="file-input-container">
-              <label htmlFor="file-upload" className="file-upload-label">
-                📎
-              </label>
-              <input 
-                type="file" 
-                id="file-upload" 
-                multiple
-                onChange={handleFileChange}
-                style={{ display: 'none' }}
-                accept="image/*,.pdf"
-              />
+          <div className="itinerary-content">
+            <div className="itinerary-tabs">
+              <button className="tab-button active">总览</button>
             </div>
             
-            {files.length > 0 && (
-              <div className="selected-files">
-                {files.map((file, index) => (
-                  <div key={index} className="selected-file">
-                    <span>{file.name}</span>
-                    <button 
-                      type="button" 
-                      onClick={() => removeFile(index)}
-                      className="remove-file-button"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
+            <div className="day-container">
+              <div className="day-header">
+                <span className="day-label">第1天</span>
+                <span className="day-date">4/5 (星期六)</span>
               </div>
-            )}
-            
-            <div className="input-button-container">
-              <input
-                type="text"
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                placeholder="Add your Plan..."
-                className="chat-text-input"
-                disabled={isLoading}
-              />
               
-              <button 
-                type="submit" 
-                className="send-button"
-                disabled={isLoading || (inputText.trim() === '' && files.length === 0)}
-              >
-                {isLoading ? 'Sending...' : 'Send'}
-              </button>
+              <button className="add-item-button">+ 添加行程项目</button>
             </div>
-          </form>
+          </div>
+        </div>
+        
+        {/* 第二个分隔线 */}
+        <div 
+          className="resize-divider"
+          ref={divider2Ref}
+          onMouseDown={handleDivider2MouseDown}
+          style={{ left: `${dividerPosition2}%` }}
+        >
+          <div className="divider-handle"></div>
+        </div>
+        
+        {/* 聊天部分 - 右侧 */}
+        <div 
+          className="chat-wrapper"
+          style={{ 
+            width: `${100 - dividerPosition2 - 1}%`,
+            left: `${dividerPosition2 + 1}%` 
+          }}
+        >
+          <ChatInterface />
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default Dashboard; 
