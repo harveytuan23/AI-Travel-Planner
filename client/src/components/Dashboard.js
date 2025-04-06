@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Dashboard.css';
+import Map from './Map';
 
 const Dashboard = () => {
   const [messages, setMessages] = useState([]);
@@ -81,98 +82,91 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>Travel Planer </h1>
+        <h1>Travel Planer</h1>
         <button className="logout-button" onClick={handleLogout}>Logout</button>
       </header>
       
-      <div className="chat-container">
-        <div className="messages-container">
-          {messages.map(message => (
-            <div 
-              key={message.id} 
-              className={`message ${message.sender === 'user' ? 'user-message' : 'ai-message'}`}
-            >
-              <div className="message-header">
-                <span className="message-sender">{message.sender === 'user' ? 'You' : 'Assistant'}</span>
-                <span className="message-time">{message.timestamp}</span>
-              </div>
-              
-              <div className="message-content">
-                {message.text && <p>{message.text}</p>}
-                
-                {message.files && message.files.length > 0 && (
-                  <div className="message-files">
-                    {message.files.map((file, index) => (
-                      <div key={index} className="file-item">
-                        {file.preview ? (
-                          <img src={file.preview} alt={file.name} className="file-preview" />
-                        ) : (
-                          <div className="file-icon">
-                            {file.type.includes('pdf') ? '📄' : '📎'}
-                          </div>
-                        )}
-                        <div className="file-details">
-                          <span className="file-name">{file.name}</span>
-                          <span className="file-size">{file.size}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
+      <div className="dashboard-content">
+        <div className="map-section">
+          <Map />
         </div>
         
-        <form className="chat-input-form" onSubmit={handleTextSubmit}>
-          <div className="file-input-container">
-            <label htmlFor="file-upload" className="file-upload-label">
-              📎
-            </label>
-            <input 
-              type="file" 
-              id="file-upload" 
-              multiple
-              onChange={handleFileChange}
-              style={{ display: 'none' }}
-              accept="image/*,.pdf"
-            />
+        <div className="chat-container">
+          <div className="messages-container">
+            {messages.map((message) => (
+              <div key={message.id} className={`message ${message.sender}`}>
+                <div className="message-content">
+                  <p>{message.text}</p>
+                  {message.files && message.files.map((file, index) => (
+                    <div key={index} className="message-file">
+                      {file.type.startsWith('image/') ? (
+                        <img src={URL.createObjectURL(file)} alt={file.name} />
+                      ) : (
+                        <div className="file-info">
+                          <span className="file-icon">📄</span>
+                          <span className="file-name">{file.name}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <span className="timestamp">{message.timestamp}</span>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
           </div>
           
-          {files.length > 0 && (
-            <div className="selected-files">
-              {files.map((file, index) => (
-                <div key={index} className="selected-file">
-                  <span>{file.name}</span>
-                  <button 
-                    type="button" 
-                    onClick={() => removeFile(index)}
-                    className="remove-file-button"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+          <form className="chat-input-form" onSubmit={handleTextSubmit}>
+            <div className="file-input-container">
+              <label htmlFor="file-upload" className="file-upload-label">
+                📎
+              </label>
+              <input 
+                type="file" 
+                id="file-upload" 
+                multiple
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+                accept="image/*,.pdf"
+              />
             </div>
-          )}
-          
-          <input
-            type="text"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="Add your..."
-            className="chat-text-input"
-          />
-          
-          <button 
-            type="submit" 
-            className="send-button"
-            disabled={inputText.trim() === '' && files.length === 0}
-          >
-            Send
-          </button>
-        </form>
+            
+            {files.length > 0 && (
+              <div className="selected-files">
+                {files.map((file, index) => (
+                  <div key={index} className="selected-file">
+                    <span>{file.name}</span>
+                    <button 
+                      type="button" 
+                      onClick={() => removeFile(index)}
+                      className="remove-file-button"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="input-button-container">
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder="Add your Plan..."
+                className="chat-text-input"
+              />
+              
+              <button 
+                type="submit" 
+                className="send-button"
+                disabled={inputText.trim() === '' && files.length === 0}
+              >
+                Send
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

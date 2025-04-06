@@ -1,0 +1,56 @@
+.location-status {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 8px 15px;
+  border-radius: 20px;
+  z-index: 1;
+  font-size: 14px;
+}
+
+.location-error {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 74, 74, 0.8);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  z-index: 1;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.location-error button {
+  background-color: white;
+  color: #333;
+  border: none;
+  border-radius: 15px;
+  padding: 3px 8px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.my-location-button {
+  position: absolute;
+  bottom: 130px;
+  right: 10px;
+  background-color: white;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  z-index: 1;
+}
+
+.my-location-button:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+} 

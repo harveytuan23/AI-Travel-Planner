@@ -18,42 +18,72 @@
   margin: 0;
   font-size: 24px;
   color: #333;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .logout-button {
-  background-color: transparent;
-  color: #666;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 8px 15px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 12px;
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
+  font-size: 16px;
+  transition: background-color 0.2s;
+  margin-left: auto;
+  width: auto;
+  min-width: unset;
+  max-width: fit-content;
 }
 
 .logout-button:hover {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: #3367d6;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 70px);
+  overflow: hidden;
+  padding: 0;
+}
+
+.map-section {
+  width: 50%;
+  height: 100%;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.map-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
 }
 
 .chat-container {
+  width: 50%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  margin: 20px;
   background-color: #fff;
   border-radius: 8px;
+  margin: 15px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
 .messages-container {
   flex-grow: 1;
-  padding: 20px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  padding: 15px;
+}
+
+.map-container > div {
+  height: 100% !important;
 }
 
 .message {
@@ -197,14 +227,21 @@
   color: #333;
 }
 
+.input-button-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 .chat-text-input {
   flex-grow: 1;
-  padding: 12px 15px;
+  padding: 15px;
   border: 1px solid #ddd;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 15px;
   outline: none;
   transition: border-color 0.2s;
+  height: 45px;
 }
 
 .chat-text-input:focus {
@@ -218,10 +255,13 @@
   border-radius: 20px;
   padding: 12px 20px;
   margin-left: 10px;
+  height: 45px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
   transition: background-color 0.2s;
+  width: auto;
+  min-width: 80px;
 }
 
 .send-button:hover {
