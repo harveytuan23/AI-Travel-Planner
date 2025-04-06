@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Map from './Map';
 import ChatInterface from './ChatInterface';
 import './Dashboard.css';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
   const [dividerPosition1, setDividerPosition1] = useState(25);
@@ -10,7 +11,7 @@ function Dashboard() {
   const divider2Ref = useRef(null);
   const dashboardRef = useRef(null);
   const username = localStorage.getItem('username') || 'User';
-  
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.documentElement.style.setProperty('--divider1-position', `${dividerPosition1}%`);
@@ -68,6 +69,7 @@ function Dashboard() {
   const handleLogout = () => {
     // Implement the logout functionality
     console.log('Logging out');
+    navigate('/login');
   };
 
   return (
