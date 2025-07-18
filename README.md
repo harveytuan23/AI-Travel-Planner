@@ -183,4 +183,4 @@ For questions or suggestions, please contact us through:
 
 ---
 
-**Louis House** - Adding Intelligence to Your Travels ✈️
+**AI Travel Planner** - Adding Intelligence to Your Travels ✈️
