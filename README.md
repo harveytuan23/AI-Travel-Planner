@@ -1,4 +1,4 @@
-# 🏠 Louis House - AI-Powered Travel Planning Assistant
+# 🏠 AI Travel Planner - AI-Powered Travel Planning Assistant
 
 An intelligent travel planning application that combines AI chatbot and Google Maps to help you easily plan perfect travel routes.
 
@@ -142,7 +142,7 @@ Enter your travel requirements in the chat interface, for example:
 ## 📁 Project Structure
 
 ```
-Louis_House/
+AITravelPlanner/
 ├── client/                 # React frontend application
 │   ├── src/
 │   │   ├── components/     # React components
