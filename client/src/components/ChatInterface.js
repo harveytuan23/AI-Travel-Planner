@@ -44,7 +44,7 @@ function ChatInterface({ onLocationsExtracted }) {
   
       try {
         //Groq APi
-        const response = await axios.post('http://localhost:3001/chat', {
+        const response = await axios.post('/chat', {
           prompt: inputText
         }, {
           withCredentials: true
