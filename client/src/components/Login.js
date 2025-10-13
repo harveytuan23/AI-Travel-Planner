@@ -60,7 +60,13 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-form-container">
-        <h2>Travel Planner</h2>
+        <div className="logo-container">
+          <img 
+            src="/ai-travel-planner-logo.jpg?v=2" 
+            alt="AI Travel Planner Logo" 
+            className="logo"
+          />
+        </div>
         
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}

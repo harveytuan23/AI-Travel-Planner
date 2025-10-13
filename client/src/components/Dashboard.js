@@ -274,7 +274,7 @@ function Dashboard() {
   return (
     <div className="dashboard-container" ref={dashboardRef}>
       <div className="dashboard-header">
-        <h1>Travel Plan</h1>
+        <h1>AI Travel Planner</h1>
         <div style={{ flexGrow: 1 }}></div>
         <div className="user-section">
           <span className="username-display">{username}</span>
