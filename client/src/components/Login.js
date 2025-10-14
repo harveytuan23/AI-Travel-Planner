@@ -32,7 +32,7 @@ function Login() {
         : '/api/auth/login';
       
       const response = await axios.post(
-        `${endpoint}`, 
+        `http://localhost:${server_port}${endpoint}`, 
         { username, password }
       );
 

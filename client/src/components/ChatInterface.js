@@ -5,6 +5,7 @@ import './ChatInterface.css';
 
 // 聊天界面主组件
 function ChatInterface({ onLocationsExtracted }) {
+  const server_port = process.env.REACT_APP_SERVER_PORT || '3001';
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -44,7 +45,7 @@ function ChatInterface({ onLocationsExtracted }) {
   
       try {
         //Groq APi
-        const response = await axios.post('/chat', {
+        const response = await axios.post(`http://localhost:${server_port}/api/chat`, {
           prompt: inputText
         }, {
           withCredentials: true
