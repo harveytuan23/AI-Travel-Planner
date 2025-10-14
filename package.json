@@ -9,7 +9,7 @@
     ],
     "scripts": {
         "install:all": "npm install --workspaces",
-        "start:client": "npm run start --workspace=client",  
+        "start:client": "npm run start --workspace=client",
         "build:client": "npm run build --workspace=client",
         "start:server": "npm run dev --workspace=server",
         "start:dev": "concurrently \"npm run start:server\" \"npm run start:client\"",

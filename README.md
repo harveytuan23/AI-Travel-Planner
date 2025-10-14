@@ -19,9 +19,9 @@ An intelligent travel planning application that combines AI chatbot and Google M
 - **Date Picker**: Flexible departure date settings
 - **Schedule Management**: Organize and manage attractions by day
 
-### 👤 User System
-- **Register/Login**: Personalized experience
-- **Data Persistence**: Secure storage of itinerary data
+### 🎯 User Experience
+- **No Login Required**: Direct access to all features
+- **Instant Planning**: Start planning immediately
 
 ## 🏗️ Technical Architecture
 
@@ -34,7 +34,6 @@ An intelligent travel planning application that combines AI chatbot and Google M
 
 ### Backend Technologies
 - **Node.js + Express** - Backend API services
-- **SQLite** - Lightweight database
 - **Groq API** - AI language model (Llama 3.3-70B)
 - **Axios** - HTTP request handling
 
@@ -51,50 +50,42 @@ An intelligent travel planning application that combines AI chatbot and Google M
 1. **Clone the Repository**
 ```bash
 git clone <repository-url>
-cd Louis_House
+cd AI-Travel-Planner
 ```
 
 2. **Install Dependencies**
 ```bash
-# Install frontend dependencies
-cd client
+# Install all dependencies
 npm install
-
-# Install backend dependencies
-cd ../server
-npm install
+cd client && npm install
+cd ../server && npm install
+cd ..
 ```
 
 3. **Environment Setup**
-Create a `.env` file in the project root by copying the example file:
+Create a `.env` file in the project root:
 ```bash
-cp .env.example .env
+# Create .env file with your API keys
 ```
 
-Then edit the `.env` file and add your actual API keys:
+Add your API keys to `.env`:
 ```env
 # Google Maps API Key
-# Get your API key from: https://developers.google.com/maps/documentation/javascript/get-api-key
-REACT_APP_GOOGLE_MAPS_API_KEY=your_actual_google_maps_api_key
+REACT_APP_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 
 # Groq API Key
-# Get your API key from: https://console.groq.com/
-GROQ_API_KEY=your_actual_groq_api_key
+GROQ_API_KEY=your_groq_api_key
 
 # Server Configuration
 SERVER_PORT=3001
 CLIENT_PORT=3000
+REACT_APP_SERVER_PORT=3001
 ```
-
-**Important**: Never commit your actual API keys to version control. The `.env` file is already in `.gitignore` to prevent accidental commits.
 
 4. **Start the Application**
 ```bash
-# Start backend server (in server directory)
-npm start
-
-# Start frontend development server (in client directory)
-npm start
+# Start both frontend and backend
+npm run start:dev
 ```
 
 5. **Open Browser**
@@ -102,42 +93,34 @@ Visit `http://localhost:3000` to start using
 
 ## 📖 User Guide
 
-### 1. Register/Login
-- Register a new account for first-time users
-- Login to access the main dashboard
-
-### 2. Start Planning Your Trip
+### 1. Start Planning Your Trip
 Enter your travel requirements in the chat interface, for example:
 ```
 "I want to go to San Jose,CA from Los Angeles,CA"
 "I am going back to San Jose,CA from Los Angeles,CA. And I would like to enjoy some ocean scenery."
 ```
 
-### 3. View AI Recommendations
+### 2. View AI Recommendations
 - AI analyzes your requirements and recommends relevant attractions
 - Recommendations automatically display on the map
 - Routes are planned in driving mode
 
-### 4. Manage Itinerary
+### 3. Manage Itinerary
 - Click attraction cards to add them to your schedule
 - Use drag-and-drop to adjust itinerary order
 - Set multi-day trips and departure dates
 
-### 5. View Detailed Information
+### 4. View Detailed Information
 - Map displays complete routes and driving times
 - Schedule shows daily arrangements
 - View detailed information for each route segment
 
 ## 🔧 API Endpoints
 
-### Authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-
 ### AI Services
-- `POST /chat` - AI chat conversation
-- `POST /locations` - Get location information
-- `GET /generate-response` - Generate route response
+- `POST /api/chat` - AI chat conversation
+- `POST /api/locations` - Get location information
+- `GET /api/generate-response` - Generate route response
 
 ## 📁 Project Structure
 
