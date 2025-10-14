@@ -1,5 +1,5 @@
 // 1) 總是載入 server/.env（不分環境）
-require('dotenv').config({ path: './.env' });
+require('dotenv').config();
 
 const express = require('express');
 const axios = require('axios');
@@ -12,7 +12,7 @@ app.use(express.json());
 const NODE_ENV = process.env.NODE_ENV || 'production';
 const groq_url_chat = 'https://api.groq.com/openai/v1/chat/completions';
 const apiKey = process.env.GROQ_API_KEY;
-const port = Number(process.env.SERVER_PORT || 3001);
+const port = process.env.PORT || 8080;
 const client_port = Number(process.env.CLIENT_PORT || 3000);
 
 // 啟動前檢查金鑰（可選但很有用）
