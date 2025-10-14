@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Map from './Map';
 import ChatInterface from './ChatInterface';
 import './Dashboard.css';
-import { useNavigate } from 'react-router-dom';
 import PlaceCard from './PlaceCard';
 import DatePicker from 'react-datepicker';
 import { fetchAllPlaceDetailsFromRawString } from '../utils/googlePlaceHelper';
@@ -18,8 +17,7 @@ function Dashboard() {
   const divider1Ref = useRef(null);
   const divider2Ref = useRef(null);
   const dashboardRef = useRef(null);
-  const username = localStorage.getItem('username') || 'User';
-  const navigate = useNavigate();
+  const username = 'User';
   const [activeTab, setActiveTab] = useState('schedule');
   const [days, setDays] = useState(3);
   const [selectedDay, setSelectedDay] = useState(1);
@@ -81,11 +79,7 @@ function Dashboard() {
     document.removeEventListener('mouseup', handleDivider2MouseUp);
   };
 
-  const handleLogout = () => {
-    // Implement the logout functionality
-    console.log('Logging out');
-    navigate('/login');
-  };
+  // Logout functionality removed
 
 
   const handleLocationsExtracted = async (locationStr) => {
@@ -278,7 +272,6 @@ function Dashboard() {
         <div style={{ flexGrow: 1 }}></div>
         <div className="user-section">
           <span className="username-display">{username}</span>
-          <button className="logout-button" onClick={handleLogout}>Logout</button>
         </div>
       </div>
       

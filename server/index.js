@@ -12,7 +12,7 @@ app.use(express.json());
 const NODE_ENV = process.env.NODE_ENV || 'production';
 const groq_url_chat = 'https://api.groq.com/openai/v1/chat/completions';
 const apiKey = process.env.GROQ_API_KEY;
-const port = process.env.PORT || 8080;
+const port = process.env.SERVER_PORT || 8080;
 const client_port = Number(process.env.CLIENT_PORT || 3000);
 
 // 啟動前檢查金鑰（可選但很有用）
@@ -41,9 +41,7 @@ app.use(cors(corsOptions));
 app.get('/', (req, res) => res.send('Hello World!'));
 app.get('/health', (req, res) => res.json({ ok: true }));
 
-// 5) （若有 auth 路由，保留既有前綴）
-const authRoute = require('./routes/auth');
-app.use('/api/auth', authRoute);
+// 5) Auth routes removed
 
 // 6) 共同的 system prompt
 const system_prompt =
