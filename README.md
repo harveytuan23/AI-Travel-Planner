@@ -15,7 +15,6 @@ An intelligent travel planning application that combines AI chatbot and Google M
 - **Real-Time Traffic Information**: Display driving time and distance
 
 ### 📅 Itinerary Management
-- **Drag-and-Drop Editing**: Intuitive itinerary adjustment interface
 - **Date Picker**: Flexible departure date settings
 - **Schedule Management**: Organize and manage attractions by day
 
